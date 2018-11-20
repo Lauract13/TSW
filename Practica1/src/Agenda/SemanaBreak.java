@@ -18,17 +18,22 @@ public class SemanaBreak {
 	     */
 	    public SemanaBreak(int numeroSemana) throws DatoException
 	    {
-	    	if (numeroSemana <= 0 || numeroSemana > 52) {
+	    	if (numeroSemana < 0 || numeroSemana > 52) {
 				
 				throw new DatoException("La semana debe tomar valor entre 0 y 52");
 			}
 	        this.numeroSemana = numeroSemana;
 	        dias = new DiaBreak[DIAS_RESERVABLES];
 	        int diaDelAnio = (numeroSemana) * 7 + 1;
-	        for(int dia = 0; dia < DIAS_RESERVABLES; dia++) {
-	            dias[dia] = new DiaBreak(diaDelAnio);
-	            diaDelAnio++;
+	        if(diaDelAnio== 365) {
+	        	dias[0] = new DiaBreak(diaDelAnio);
+	        }else {
+	        	for(int dia = 0; dia < DIAS_RESERVABLES; dia++) {
+		            dias[dia] = new DiaBreak(diaDelAnio);
+		            diaDelAnio++;
+		        }
 	        }
+	        
 	    }
 
 	    /**
@@ -48,7 +53,8 @@ public class SemanaBreak {
 	     */
 	    public DiaBreak getDia(int diaSemana)
 	    {
-	        if(diaSemana >= 1 && diaSemana <= DIAS_RESERVABLES) {
+	    	diaSemana--;
+	        if(diaSemana >= 0 && diaSemana < DIAS_RESERVABLES) {
 	            return dias[diaSemana];
 	        }
 	        else {
@@ -101,6 +107,7 @@ public class SemanaBreak {
 	    	     break;
 	    	 case 4: 
 	    		 diaNombre="Viernes";
+	    		 break;
 	    	 default: 
 	    		 diaNombre="No citable";
 	    	     break;

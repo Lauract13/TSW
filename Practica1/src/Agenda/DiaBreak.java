@@ -15,7 +15,7 @@ public class DiaBreak {
 	     */
 	    public DiaBreak(int diaNumero) throws DatoException{
 	    
-	    	if (diaNumero < 0 || diaNumero >= 365){
+	    	if (diaNumero <= 0 || diaNumero > 365){
 	    		
 	    		throw new DatoException("La semana debe tomar valor entre 1 y 365");
 	    	}
@@ -33,29 +33,44 @@ public class DiaBreak {
 	    
 	    {   int hora;    
 	    	int slot = 0, sigSlot;
-	    	while (slot < MAX_CITAS_POR_DIA){ 
-	    		if(citas[slot] == null) {
-	            	hora = slot;
-	                if(duracion == 1) {
-	                      return hora;
-	                }
-	                else {
-	                   
-	                	int numSlots = duracion;
-	                	sigSlot= slot + 1;
-	                	while (numSlots > 0 && sigSlot < MAX_CITAS_POR_DIA && citas[sigSlot] == null )
-	                     { numSlots--; }
+	    	if(duracion > 0) {
+	    		while (slot < MAX_CITAS_POR_DIA){ 
+		    		if(citas[slot] == null) {
+		            	hora = slot;
+		                if(duracion == 1) {
+		                	//
+		                	citas[slot] = new Cita("", duracion);
+		                      return hora;
+		                }
+		                else {
+		                   
+		                	int numSlots = duracion;
+		                	sigSlot= slot + 1;
+		                	
+		                	if(numSlots <= MAX_CITAS_POR_DIA) {
+		                		while (numSlots > 0 && sigSlot < MAX_CITAS_POR_DIA && citas[sigSlot] == null )
+			                     { numSlots--; 
+			                   
+			                       }
 
-	                    if(numSlots == 0) {
-	                        return hora;
-	                    }
-	                    else {
-	                    	slot= sigSlot;
-	                    }
-	                }
-	             }
-	    	 slot++;
-	        }
+			                    if(numSlots == 0) {
+			                    	for(int i = 0; i < duracion; i++) {
+			                    		citas[i] = new Cita("", duracion);
+			                    	}
+			                        return hora;
+			                    }
+			                    else {
+			                    	slot= sigSlot;
+			                    }
+		                		
+		                	}
+		                	
+		                }
+		             }
+		    	 slot++;
+		        }
+	    	}
+	    	
 	    	
 	    	return -1;
 	    }
@@ -97,6 +112,7 @@ public class DiaBreak {
 	    public Cita getCita(int hora)
 	    {
 	        if(validaHora(hora)) {
+	        	
 	            return citas[hora - PRIMERA_CITA];
 	        }
 	        else {
@@ -121,7 +137,7 @@ public class DiaBreak {
 	            }
 	        }
 	    	else {
-                return "Hora valida";
+                return "Hora no valida";
             }
 	    }
 
@@ -145,15 +161,21 @@ public class DiaBreak {
 	    public boolean huecoLibre(int hora, int duracion) {
 	    	
 	    	int horaIni = hora - PRIMERA_CITA;
-            if(citas[horaIni] == null) {
-            	duracion--;
-	            for(int slot=horaIni+1; duracion > 0 && slot < MAX_CITAS_POR_DIA ; slot++) {
-	          	  if (citas[slot] == null) {duracion--;}
-	          	  	}
-   
-              return true;
-            }
-            else {return false;}
+            
+	    	if(horaIni >= 0 && horaIni <= 7) {
+	    		if(citas[horaIni] == null) {
+	            	duracion--;
+		            for(int slot=horaIni+1; duracion > 0 && slot < MAX_CITAS_POR_DIA ; slot++) {
+		          	  if (citas[slot] == null) {duracion--;}
+		          	  	}
+	   
+	              return true;
+	            }
+	            else {return false;}
+	    	}else {
+	    		return false;
+	    	}
+	    	
 	    }
 	    
 	    
