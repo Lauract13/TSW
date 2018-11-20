@@ -14,11 +14,11 @@ public class SemanaBreak {
 	    private final DiaBreak[] dias;
 
 	    /**
-	      * @param numeroSemana (0-52).
+	      * @param numeroSemana (1-52).
 	     */
 	    public SemanaBreak(int numeroSemana) throws DatoException
 	    {
-	    	if (numeroSemana < 0 || numeroSemana > 52) {
+	    	if (numeroSemana <= 0 || numeroSemana > 52) {
 				
 				throw new DatoException("La semana debe tomar valor entre 0 y 52");
 			}
@@ -42,7 +42,8 @@ public class SemanaBreak {
 	     * @return Cita de un dia a una hora .
 	     */
 	    public String mostrarCita(int hora, int diaSemana)
-	    {   	    	
+	    {   
+	    
 	        return getDia(diaSemana).muestraCita(hora);
 	    }
 
@@ -74,10 +75,13 @@ public class SemanaBreak {
 	    public String primerHueco(int duracion) {
 	    	
 	    	String disponible;
-	    	for(int dia = 1; dia < DIAS_RESERVABLES; dia++) {
+	    	for(int dia = 0; dia < DIAS_RESERVABLES; dia++) {
 	    		int hueco=dias[dia].buscaSlot(duracion);
+	    		
 	    		if (hueco!=-1)
-	             { disponible= diaSemana(dia) + " " + hueco + ":00";
+	             { 
+	    			hueco = hueco + 9;
+	    			disponible= diaSemana(dia) + " " + hueco + ":00";
 	    			return disponible;
 	             }
 	    	}
