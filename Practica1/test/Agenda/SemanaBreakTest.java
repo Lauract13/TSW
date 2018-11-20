@@ -11,6 +11,7 @@ public class SemanaBreakTest {
 	private SemanaBreak semanaBreak2;
 	private SemanaBreak semanaBreak3;
 	private SemanaBreak semanaBreak4;
+	private DiaBreak diaCita;
 
 	@Before
 	public void setUp() throws Exception {
@@ -19,6 +20,7 @@ public class SemanaBreakTest {
 			semanaBreak2 = new SemanaBreak(2);
 			semanaBreak3 = new SemanaBreak(3);
 			semanaBreak4 = new SemanaBreak(4);
+			diaCita = new DiaBreak(1);
 		} catch (DatoException e) {
 			fail("Inicializacion fallada.");
 		}
@@ -29,11 +31,7 @@ public class SemanaBreakTest {
 	 *  if(diaDelAnio== 365) {
 	        	dias[0] = new DiaBreak(diaDelAnio);
 	        }
-	 *  Además el test nos ha mostrado que la semana 0 no estaba contemplada como válida, se ha modificado el if quitándole el igual a la primera condición
-	 *  CODIGO ANTIGUO:
-	 *  if (numeroSemana <= 0 || numeroSemana > 52)
-	 *  CODIGO NUEVO 
-	 *  if (numeroSemana < 0 || numeroSemana > 52)
+	 *  
 	 */
 	@Test
 	public void testSemanaBreak()
@@ -44,16 +42,23 @@ public class SemanaBreakTest {
 		} catch (DatoException e) {
 			testOk1 = false;
 		}
-	
+		
 		boolean testOk2 = true;
 		try {
-			new SemanaBreak(0);
 			new SemanaBreak(52);
 		} catch (DatoException e) {
 			testOk2 = false;
 		}
+		
+		boolean testOk3 = true;
+		try {
+			new SemanaBreak(0);
+		}catch(DatoException e) {
+			testOk3 = false;
+		}
 		assertFalse("Semana 53 no debe ser valida", testOk1);
-		assertTrue("Semanas 0 y 52 deben ser validas", testOk2);
+		assertTrue("Semana 52 debe ser valida", testOk2);
+		assertFalse("Semana 0 no debe ser valida", testOk3);
 	}
 	/*
 	 * El test nos mostró que el quinto día de la semana no devolvía viernes, se ha modificado el código añadiendo un break; en el case 4 perteneciente
@@ -121,6 +126,72 @@ public class SemanaBreakTest {
 		assertTrue("No debe devolver el día de la semana", dia5 == null);
 		assertTrue("No debe devolver el día de la semana", dia6 == null);
 
+		
+		
+		
+	}
+	/*
+	 * El test nos mostró que el código comenzaba las horas a partir de la hora cero y no a partir de la hora nueve como debería, para arreglarlo 
+	 * se ha añadido el siguiente código dentro del condicional 
+	 * CODIGO VIEJO
+	 * if (hueco!=-1)
+	             { 
+	    			
+	    			disponible= diaSemana(dia) + " " + hueco + ":00";
+	    			return disponible;
+	             }
+	 * CODIGO NUEVO
+	 * if (hueco!=-1)
+	             { 
+	    			hueco = hueco + 9;
+	    			disponible= diaSemana(dia) + " " + hueco + ":00";
+	    			return disponible;
+	             }
+	             
+	             
+	    Además el test nos mostró que el primer día que el código contemplaba era el Martes puesto que el bucle comenzaba en el día 1, el código ha sido modificado
+	    para que el bucle comience en el dia 0 -> Lunes
+	    for(int dia = 0; dia < DIAS_RESERVABLES; dia++)         
+	 */
+	@Test 
+	public void testPrimerHueco() {
+		String huecoLibre = semanaBreak1.primerHueco(1);
+		String noDisponibilidad1 = semanaBreak2.primerHueco(9);
+		String noDisponibilidad2 = semanaBreak2.primerHueco(0);
+		
+		assertTrue("Debe mostrar el primer hueco libre de duración 1", huecoLibre.equals("Lunes 9:00"));
+		assertTrue("No debe mostrar un hueco para una duración de 9", noDisponibilidad1.equals("No hay disponibilidad"));
+		assertTrue("No debe mostrar un hueco para una duración de 0", noDisponibilidad2.equals("No hay disponibilidad"));
+		
+		
+		
+	}
+	/*
+	 * No se ha encontrado ningún error en el código de mostrarCita
+	 */
+	@Test
+	public void testMostrarCita() {
+		
+			Cita cita = new Cita("", 0);
+			diaCita.asignarCita(9, cita);
+			
+			String cita1 = semanaBreak1.mostrarCita(9, 1); 
+			String cita2 = semanaBreak2.mostrarCita(10, 1); 
+			String cita3 = semanaBreak1.mostrarCita(18, 1);
+			
+			String citaEncontrada = "9:00 " + cita.getDescripcion();
+			String citaNoEncontrada = "No existe";
+			String horaNoValida = "Hora no valida";
+			
+			
+			assertTrue("Cita de las 9 debe ser encontrada", cita1.equals(citaEncontrada));
+			assertTrue("Cita de las 10 no debe ser encontrada", cita2.equals(citaNoEncontrada));
+			assertTrue("Cita de las 18 no es valida", cita3.equals(horaNoValida));
+		
+			
+			
+			
+			
 		
 		
 		
